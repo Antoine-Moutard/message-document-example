@@ -1,33 +1,36 @@
 package fr.miage;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.main.Main;
-
-import java.util.Map;
+import org.apache.camel.component.sjms2.Sjms2Component;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.activemq.artemis.jms.client.ActiveMQConnectionFactory;
 
 public class CamelRoute extends RouteBuilder {
-
-    @SuppressWarnings("unchecked")
+    
+    @Override
     public void configure() throws Exception {
-
         from("file:data/input?noop=true")
+            .to("sjms2:queue:INF2");
 
-            .unmarshal().json()
-
-            .setBody(exchange -> {
-                Map<String, Object> user = exchange.getIn().getBody(Map.class);
-                user.put("status", "active");
-                return user;
-            })
-
-            .marshal().json()
-
-        .to("file:data/output");
+        from("sjms2:queue:INF2")
+            .to("file:data/output");
     }
 
     public static void main(String[] args) throws Exception {
-        Main main = new Main();
-        main.configure().addRoutesBuilder(new CamelRoute());
-        main.run(args);
+
+        CamelContext context = new DefaultCamelContext();
+
+        ActiveMQConnectionFactory activeMqConnectionFactory = new ActiveMQConnectionFactory("tcp://localhost:61616");
+
+        Sjms2Component component = new Sjms2Component();
+        component.setConnectionFactory(activeMqConnectionFactory);
+        context.addComponent("sjms2", component);
+
+        context.addRoutes(new CamelRoute());
+
+        context.start();
+        Thread.sleep(10000);
+        context.stop();
     }
 }
