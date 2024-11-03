@@ -1,8 +1,8 @@
 {
-    "userId": "U12345",
-    "name": "Emma dvdv",
-    "email": "emma.johnson@example.com",
-    "subscribed": true,
-    "lastLogin": "2023-11-01"
-  }
-  
+  "userId": "U12345",
+  "name": "Emma dvdv",
+  "email": "emma.johnson@example.com",
+  "subscribed": true,
+  "lastLogin": "2023-11-01",
+  "status": "inactive"
+}

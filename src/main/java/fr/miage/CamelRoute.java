@@ -7,6 +7,7 @@ import java.util.Map;
 
 public class CamelRoute extends RouteBuilder {
 
+    @SuppressWarnings("unchecked")
     public void configure() throws Exception {
 
         from("file:data/input?noop=true")
@@ -21,7 +22,7 @@ public class CamelRoute extends RouteBuilder {
 
             .marshal().json()
 
-            .to("file:data/output");
+        .to("file:data/output");
     }
 
     public static void main(String[] args) throws Exception {
